@@ -26,16 +26,16 @@ param(
         New-Item $BasePath -ItemType Directory
     }
     $PSVersion = $PSVersionTable.PSVersion
-    $FileURL = 'https://github.com/BlazeLewis/POSH/Utilities/SupportFiles/WinSCP'
-
+    $FileURL = 'https://github.com/BlazeLewis/POSH/raw/main/Utilities/SupportFiles/WinSCP'
     $FileTest = @('WinSCPnet.dll','WinSCP.exe')
 
     ##Download if Needed
     foreach($File in $FileTest){ #}
         if(!(test-Path "$BasePath\$File")){
             if($PSVersion.major -eq 5){
-                $FileDownloadCode = (Invoke-WebRequest -UseBasicParsing -Uri "$FileURL/$File" -OutFile "$BasePath\$File" -PassThru).statuscode
-            }else{
+                $FileDownloadCode =  (Invoke-WebRequest -UseBasicParsing -Uri "$FileURL/$File" -OutFile "$BasePath\$File" -PassThru).statuscode
+            }
+            if($PSVersion.major -ne 5){
                 $FileDownloadCode = (Invoke-WebRequest -Uri "$FileURL/$File" -OutFile "$BasePath\$File" -PassThru).statuscode
             }
             Unblock-File -Path "$BasePath\$File" -Confirm:$false
