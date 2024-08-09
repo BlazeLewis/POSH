@@ -1,4 +1,4 @@
-![ascreenshot](POSH.png)
+![screenshot](POSH.png)
 Handy PowerShell Scripts, Functions and Modules
 
 
@@ -10,6 +10,7 @@ $FilePath = "C:\Temp"  ##Place you want it Saved locally
 #Enter your URL
 $BaseURL = "https://raw.githubusercontent.com/BlazeLewis"
 $Repo = "POSH"
+$Branch = 'main'
 $RepoFolder = "" #Use a / to separate folders (ex. Windows/Utilities)
 $FileName = "SwissArmyKnife.psm1"
 
@@ -20,8 +21,8 @@ if(!(Test-Path $FilePath)){
     New-Item $FilePath -ItemType Directory
 }
 
-$rawURI = 'main'
-$uriParts = @($BaseURL, $Repo, $rawURI, $RepoFolder, $FileName) | Where-Object { $_ -ne "" } 
+
+$uriParts = @($BaseURL, $Repo, $Branch, $RepoFolder, $FileName) | Where-Object { $_ -ne "" } 
 $URI = $uriParts -join "/"
 
 #Select method of downloading based on OS Version
