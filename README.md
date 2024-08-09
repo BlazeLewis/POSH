@@ -1,4 +1,3 @@
-# POSH
 ![ascreenshot](POSH.png)
 Handy PowerShell Scripts, Functions and Modules
 
