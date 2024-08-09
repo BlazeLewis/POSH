@@ -1,5 +1,5 @@
 
-Function Get-GitHubFile {
+Function Get-GitHubPublicFile {
     param(
         ##Create default paths if needed
         [Parameter(Mandatory=$false)]
@@ -49,4 +49,4 @@ Function Get-GitHubFile {
 
 }
 
-Export-ModuleMember -Function Get-GitHubFile
+Export-ModuleMember -Function Get-GitHubPublicFile
