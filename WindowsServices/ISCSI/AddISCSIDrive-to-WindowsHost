@@ -1,0 +1,41 @@
+$TargetPortalAddresses = @(
+    "161.26.114.89","161.26.114.91"
+) #AddMoreLike,"161.26.110.25”,"161.26.110.26")
+
+
+$iSCSIAdapter = Get-NetAdapter |?{$_.name -like "iSCSI"}
+
+
+$iSCSIUN = Read-Host "Enter Username for iSCSI on $SQLServerFQDN"
+$iSCSIPW = Read-Host "Enter Password for iSCSI on $SQLServerFQDN"
+$iSCSIGateway = Read-Host "Enter IP Address of iSCSI network Gateway (ex. 10.1.2.254)"
+
+
+$LocaliSCSIAddress = (Get-NetIPAddress | ?{$_.InterfaceAlias -like "*iSCSI*"}).IPAddress
+
+#$GWIP=Read-Host "enter IP for iSCSI Gateway"
+$iSCSIAdapter= get-netadapter |?{$_.Name -like "*iSCSI*"}
+$iSCSIAdapterIndex = $iSCSIAdapter.ifIndex
+$LocaliSCSIAddress = (Get-NetIPAddress | ?{$_.InterfaceAlias -like "*iSCSI*"}).IPAddress
+
+#$GWIP = (Get-NetIPAddress -InterfaceIndex $iSCSIAdapterIndex ).IPAddress
+
+$GWIP = $iSCSIGateway		
+#$GWIP = (Get-NetRoute -InterfaceIndex $iSCSIAdapterIndex).NextHop |?{$_ -ne "0.0.0.0"} | select -First 1
+foreach($IPAddress in $TargetPortalAddresses){
+    New-NetRoute -DestinationPrefix "$IPAddress/32" -ifIndex $iSCSIAdapterIndex -NextHop $GWIP
+}
+
+Foreach ($TargetPortalAddress in $TargetPortalAddresses){
+    New-IscsiTargetPortal -TargetPortalAddress $TargetPortalAddress -TargetPortalPortNumber 3260 -InitiatorPortalAddress $LocaliSCSIAddress -AuthenticationType ONEWAYCHAP -ChapUsername "$iSCSIUN" -ChapSecret $iSCSIPW
+}
+		
+Foreach ($TargetPortalAddress in $TargetPortalAddresses){
+$NodeAddresses = (Get-iscsiTarget).NodeAddress
+
+    Foreach($NodeAddress in $NodeAddresses){
+		Connect-IscsiTarget -IsMultipathEnabled $true -NodeAddress $NodeAddress -InitiatorPortalAddress $LocaliSCSIAddress -TargetPortalAddress  $TargetPortalAddress -IsPersistent $true -AuthenticationType ONEWAYCHAP -ChapUsername $iSCSIUN -ChapSecret $iSCSIPW
+	}
+}
+		
+
