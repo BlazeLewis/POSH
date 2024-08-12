@@ -1,6 +1,6 @@
 $TargetPortalAddresses = @(
-    "161.26.114.89","161.26.114.91"
-) #AddMoreLike,"161.26.110.25”,"161.26.110.26")
+    "<IP1>","<IP2>"
+) #AddMoreLike,"10.26.110.25”,"10.26.110.26")
 
 
 $iSCSIAdapter = Get-NetAdapter |?{$_.name -like "iSCSI"}
@@ -8,10 +8,14 @@ $iSCSIAdapter = Get-NetAdapter |?{$_.name -like "iSCSI"}
 
 $iSCSIUN = Read-Host "Enter Username for iSCSI on $SQLServerFQDN"
 $iSCSIPW = Read-Host "Enter Password for iSCSI on $SQLServerFQDN"
-$iSCSIGateway = Read-Host "Enter IP Address of iSCSI network Gateway (ex. 10.1.2.254)"
+#$iSCSIGateway = Read-Host "Enter IP Address of iSCSI network Gateway (ex. 10.1.2.254)"
 
 
 $LocaliSCSIAddress = (Get-NetIPAddress | ?{$_.InterfaceAlias -like "*iSCSI*"}).IPAddress
+if(!$LocaliSCSIAddress){
+    Write-Host "Make sure your iSCSI adapter is named 'iSCSI', Stopping!" -BackgroundColor Red -ForegroundColor Black
+    break
+}
 
 #$GWIP=Read-Host "enter IP for iSCSI Gateway"
 $iSCSIAdapter= get-netadapter |?{$_.Name -like "*iSCSI*"}
@@ -20,8 +24,8 @@ $LocaliSCSIAddress = (Get-NetIPAddress | ?{$_.InterfaceAlias -like "*iSCSI*"}).I
 
 #$GWIP = (Get-NetIPAddress -InterfaceIndex $iSCSIAdapterIndex ).IPAddress
 
-$GWIP = $iSCSIGateway		
-#$GWIP = (Get-NetRoute -InterfaceIndex $iSCSIAdapterIndex).NextHop |?{$_ -ne "0.0.0.0"} | select -First 1
+#$GWIP = $iSCSIGateway		
+$GWIP = (Get-NetRoute -InterfaceIndex $iSCSIAdapterIndex).NextHop |?{$_ -ne "0.0.0.0"} | select -First 1
 foreach($IPAddress in $TargetPortalAddresses){
     New-NetRoute -DestinationPrefix "$IPAddress/32" -ifIndex $iSCSIAdapterIndex -NextHop $GWIP
 }

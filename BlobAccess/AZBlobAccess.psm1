@@ -83,7 +83,7 @@ function Import-AZBlobFunctions {
     # }
 }
 
-function Start-AZBlobUploadOPSLogs {
+function Start-AZBlobUploadArchiveLogs {
 <#
     .SYNOPSIS
         This function is used to upload Log Files to a "log-archive" container located on Azure using a SASURL.  
@@ -92,7 +92,7 @@ function Start-AZBlobUploadOPSLogs {
 
     .DESCRIPTION
         Suggested Output use in a script
-        Start-AZBlobUpoadOPSLogs -SASURL <SASURLwithKEY> -ProductName <RootFolderName> -LogType <SubFolderName> -File <PathtoSourceFile>
+        Start-AZBlobUploadArchiveLogs -SASURL <SASURLwithKEY> -ProductName <RootFolderName> -LogType <SubFolderName> -File <PathtoSourceFile>
 
 #>
     param (
@@ -300,7 +300,7 @@ function Get-AZBlobFile {
     <#
     if($Search -eq $False -and $Filter -notmatch "^(\/[^\/]+)+\/([\w\s.-]+\.[\w.-]+)$"){ #  (Extension Filter using / in the path)
         Write-Host "Specific File Path not Set.  Search not enabled.
-        If not using -Search=`$False then you will need to define an absolute file name and path. ex. /Spruce/24_0_6_187/UpgradeInstaller_24_0_6_187.msi
+        If not using -Search=`$False then you will need to define an absolute file name and path. ex. /Folder/version/file.ext
         Using:$Filter as the path, must inclue 1 sub-directory and a filename with an extension.
         Stopping." -BackgroundColor Red -ForegroundColor Black
         break
@@ -441,4 +441,4 @@ function Get-AZBlobFile {
      Return $ReturnData
 }
 
-Export-ModuleMember -function Import-AZBlobFunctions, Start-AZBlobUploadOPSLogs, Start-AZBlobUpload, Get-AZBlobFile
+Export-ModuleMember -function Import-AZBlobFunctions, Start-AZBlobUploadArchiveLogs, Start-AZBlobUpload, Get-AZBlobFile
